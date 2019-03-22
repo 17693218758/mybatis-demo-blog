@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间 就是接口的名字,id指接口中方法的名字-->
+<!--resources里面的com.cheer.mybatis.mapper文件夹需要一步步创建-->
+<mapper namespace="com.cheer.mybatis.mapper.BlogMapper">
+    <select id="findActiveBlogWithTitleLike" resultType="blog">
+        select * from blog where state = 'ACTIVE'
+        <if test="null != title">
+            and title like #{title}
+        </if>
+    </select>
+    <select id="findActiveBlogWithTitleLike2" resultType="blog">
+        select * from blog where state = 'ACTIVE'
+        <if test="null !=title">
+            and title like #{title}
+        </if>
+        <if test="null !=author">
+            and author = #{author}
+        </if>
+    </select>
+    <select id="findActiveBlogWithTitleLike1" resultType="blog">
+        select * from blog where state = 'ACTIVE'
+        <choose>
+            <when test="null != title">
+                and title like #{title}
+            </when>
+            <when test="null != author">
+                and title like #{author}
+            </when>
+            <otherwise>
+                and tag = #{tag}
+            </otherwise>
+        </choose>
+    </select>
+    <select id="findActiveBlogLike2" resultType="blog">
+        select * from blog
+        <where>
+            <if test="null != title">
+                title like #{title}
+            </if>
+            <if test="null != author">
+                and author = #{author}
+            </if>
+        </where>
+    </select>
+
+    <update id="update" parameterType="blog">
+        update blog
+        <set>
+            id = #{id},
+            <if test="null != author">
+                author = #{author},
+            </if>
+            <if test="null != state">
+                state = #{state}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!--批量插入-->
+    <insert id="insertList">
+    insert into blog values
+    <foreach collection="list" item="blog" index="index" separator=",">
+            (#{blog.id},#{blog.title},#{blog.author},#{blog.state},#{blog.tag} )
+    </foreach>
+    </insert>
+</mapper>
+
